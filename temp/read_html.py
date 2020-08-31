@@ -5,10 +5,42 @@ import shutil
 
 from bs4 import BeautifulSoup
 from lxml import etree
+import xlwt
 # chcp 936
 # chcp 65001
 print(sys.getdefaultencoding())
 
+
+
+def write_data_to_excel():
+
+    # 将sql作为参数传递调用get_data并将结果赋值给result,(result为一个嵌套元组)
+    # result = get_data(sql)
+    # 实例化一个Workbook()对象(即excel文件)
+    wbk = xlwt.Workbook(encoding='utf-8')
+    # 新建一个名为Sheet1的excel sheet。此处的cell_overwrite_ok =True是为了能对同一个单元格重复操作。
+    sheet = wbk.add_sheet('Sheet1',cell_overwrite_ok=True)
+
+    # 遍历result中的没个元素。
+    # for i in xrange(len(result)):
+    #     #对result的每个子元素作遍历，
+    #     for j in xrange(len(result[i])):
+    #         #将每一行的每个元素按行号i,列号j,写入到excel中。
+    #         sheet.write(i,j,result[i][j])
+    sheet.write(0, 0, "0.0")
+    sheet.write(0, 1, "0.1")
+
+    sheet.write(1, 0, "1.0")
+    sheet.write(1, 1, "1.1")
+
+    sheet.write(10, 10, "10.10")
+
+    # 以传递的name+当前日期作为excel名称保存。
+    wbk.save('123.xls')
+
+write_data_to_excel()
+write_data_to_excel()
+write_data_to_excel()
 
 with open('TV BOX APP TVB_百度搜索1.html', 'r', encoding='utf-8') as f:
     html = f.read(4096*1024*1024)
