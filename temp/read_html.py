@@ -6,10 +6,10 @@ import shutil
 from bs4 import BeautifulSoup
 from lxml import etree
 import xlwt
+import xlsxwriter
 # chcp 936
 # chcp 65001
 print(sys.getdefaultencoding())
-
 
 
 def write_data_to_excel():
@@ -19,7 +19,8 @@ def write_data_to_excel():
     # 实例化一个Workbook()对象(即excel文件)
     wbk = xlwt.Workbook(encoding='utf-8')
     # 新建一个名为Sheet1的excel sheet。此处的cell_overwrite_ok =True是为了能对同一个单元格重复操作。
-    sheet = wbk.add_sheet('Sheet1',cell_overwrite_ok=True)
+    sheet = wbk.add_sheet('Sheet1', cell_overwrite_ok=True)
+    # sheet.insert_image('D4','timg.jpg')
 
     # 遍历result中的没个元素。
     # for i in xrange(len(result)):
@@ -38,12 +39,51 @@ def write_data_to_excel():
     # 以传递的name+当前日期作为excel名称保存。
     wbk.save('123.xls')
 
+
+def write_data_to_excel():
+    # Create an new Excel file and add a worksheet.
+    workbook = xlsxwriter.Workbook('demo.xlsx')
+    worksheet = workbook.add_worksheet()
+
+    # Widen the first column to make the text clearer.
+    worksheet.set_column('A:A', 20)
+
+    # Add a bold format to use to highlight cells.
+    bold = workbook.add_format({'bold': True})
+
+    # Write some simple text.
+    worksheet.write('A1', 'Hello')
+
+    # Text with formatting.
+    worksheet.write('A2', 'World', bold)
+
+    # Write some numbers, with row/column notation.
+    worksheet.write(0, 0, "0.0")
+    worksheet.write(0, 1, "0.1")
+    worksheet.write(1, 0, "1.0")
+    worksheet.write(1, 1, "1.1")
+    worksheet.write(10, 10, "10.10")
+
+    # 设置宽高
+    worksheet.set_column(first_col=0, last_col=2, width=30)
+    worksheet.set_row(row=4, height=30)
+    worksheet.set_row(row=5, height=35)
+
+    # 设置缩放比例
+    img_config = {'x_scale': 0.3, 'y_scale': 0.3}
+    # Insert an image.
+    worksheet.insert_image('B5', 'timg.jpg', img_config)
+    worksheet.insert_image('D4', './TV BOX APP TVB_百度搜索1_files/result2.png', img_config)
+
+    workbook.close()
+
+
 write_data_to_excel()
-write_data_to_excel()
-write_data_to_excel()
+# write_data_to_excel()
+# write_data_to_excel()
 
 with open('TV BOX APP TVB_百度搜索1.html', 'r', encoding='utf-8') as f:
-    html = f.read(4096*1024*1024)
+    html = f.read(4096 * 1024 * 1024)
     items_weburl = []
     items_name = []
     items_desc = []
@@ -66,14 +106,10 @@ with open('TV BOX APP TVB_百度搜索1.html', 'r', encoding='utf-8') as f:
         items_desc.append(desc_response.xpath('string(.)'))
         items_weburl.append(weburl[0])
 
-        print("name:{} desc:{} weburl:{}".format(
-            name_response.xpath('string(.)'), desc_response.xpath('string(.)'), weburl[0]))
-
-
-
+        print("name:{} desc:{} weburl:{}".format(name_response.xpath('string(.)'), desc_response.xpath('string(.)'), weburl[0]))
 
 with open('中港台電視 TVB - Google 搜索1.html', 'r', encoding='utf-8') as f:
-    html = f.read(4096*1024*1024)
+    html = f.read(4096 * 1024 * 1024)
     tree = etree.HTML(html, etree.HTMLParser())
     res = tree.xpath('//div[@id="rso"]/div[@class="g"]/div[@class="rc"]')
     items_weburl = []
@@ -92,8 +128,7 @@ with open('中港台電視 TVB - Google 搜索1.html', 'r', encoding='utf-8') as
         items_name.append(name[0])
         items_desc.append(response.xpath('string(.)'))
 
-        print("name:{} desc:{} weburl:{}".format(
-            name[0], response.xpath('string(.)'), weburl[0]))
+        print("name:{} desc:{} weburl:{}".format(name[0], response.xpath('string(.)'), weburl[0]))
     # weburl_items = tree.xpath('//div[@class="TbwUpd NJjxre"]/cite[@class="iUh30 bc tjvcx"]/text()')
     # name_items = tree.xpath('//div[@class="rc"]//h3[@class="LC20lb DKV0Md"]/text()')
 
@@ -101,43 +136,31 @@ with open('中港台電視 TVB - Google 搜索1.html', 'r', encoding='utf-8') as
     name
     desc
 
-    
-
-
-
 with open('中港台電視 TVB - Google Play.html', 'r', encoding='utf-8') as f:
-    html = f.read(4096*1024*1024)
+    html = f.read(4096 * 1024 * 1024)
     tree = etree.HTML(html, etree.HTMLParser())
     items_1 = tree.xpath('//div[@class="ZmHEEd "]')
     for item_1_x in items_1:
-        items_2 = item_1_x.xpath(
-            '//div[@class="Ktdaqe  "]/div[@class="ZmHEEd "]//div[@class="Vpfmgd"]')
+        items_2 = item_1_x.xpath('//div[@class="Ktdaqe  "]/div[@class="ZmHEEd "]//div[@class="Vpfmgd"]')
         for item_2_x in items_2:
             item_2_x = etree.fromstring(etree.tostring(item_2_x))
-            image = item_2_x.xpath(
-                '//span[@class="kJ9uy K3IMke buPxGf"]/img/@src')  # div[@class="uzcko"]/div[@class="N9c7d eJxoSc"]
+            image = item_2_x.xpath('//span[@class="kJ9uy K3IMke buPxGf"]/img/@src')  # div[@class="uzcko"]/div[@class="N9c7d eJxoSc"]
             if len(image) == 0:
-                image = item_2_x.xpath(
-                    '//span[@class="kJ9uy K3IMke buPxGf"]/img/@data-src')  # div[@class="uzcko"]/div[@class="N9c7d eJxoSc"]
+                image = item_2_x.xpath('//span[@class="kJ9uy K3IMke buPxGf"]/img/@data-src')  # div[@class="uzcko"]/div[@class="N9c7d eJxoSc"]
             if len(image) == 0:
                 image.append("")
-            name = item_2_x.xpath(
-                '//div[@class="b8cIId ReQCgd Q9MA7b"]/a/div[@class="WsMG1c nnK0zc"]/text()')
+            name = item_2_x.xpath('//div[@class="b8cIId ReQCgd Q9MA7b"]/a/div[@class="WsMG1c nnK0zc"]/text()')
             if len(name) == 0:
                 name.append("")
-            company = item_2_x.xpath(
-                '//div[@class="b8cIId ReQCgd KoLSrc"]/a/div[@class="KoLSrc"]/text()')
+            company = item_2_x.xpath('//div[@class="b8cIId ReQCgd KoLSrc"]/a/div[@class="KoLSrc"]/text()')
             if len(company) == 0:
                 company.append("")
-            star = item_2_x.xpath(
-                '//div[@class="vU6FJ p63iDd"]//div[@class="pf5lIe"]/div/@aria-label')
+            star = item_2_x.xpath('//div[@class="vU6FJ p63iDd"]//div[@class="pf5lIe"]/div/@aria-label')
             if len(star) > 0:
                 star = star[0].split(" ")[1]
             else:
                 star = ""
-            print("name:{} company:{} star:{} image:{}".format(
-                name[0], company[0], star, image[0]))
-
+            print("name:{} company:{} star:{} image:{}".format(name[0], company[0], star, image[0]))
 
 # etree.HTML()
 # tree = etree.parse('./TV BOX TVB - Google Play.html', etree.HTMLParser())
