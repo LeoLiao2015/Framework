@@ -9,6 +9,70 @@ from lxml import etree
 # chcp 65001
 print(sys.getdefaultencoding())
 
+
+with open('TV BOX APP TVB_百度搜索1.html', 'r', encoding='utf-8') as f:
+    html = f.read(4096*1024*1024)
+    items_weburl = []
+    items_name = []
+    items_desc = []
+
+    tree = etree.HTML(html, etree.HTMLParser())
+    res = tree.xpath('//div[@class="result c-container "]')
+    for re in res:
+        search_item = etree.fromstring(etree.tostring(re))
+        name = search_item.xpath('//h3[contains(@class, "t")]/a')
+        name_response = etree.HTML(text=etree.tostring(name[0]))
+        # name_response.xpath('string(.)')
+
+        desc = search_item.xpath('//div[contains(@class, "c-abstract")]')
+        desc_response = etree.HTML(text=etree.tostring(desc[0]))
+        # desc_response.xpath('string(.)')
+
+        weburl = search_item.xpath('//h3[contains(@class, "t")]/a/@href')
+
+        items_name.append(name_response.xpath('string(.)'))
+        items_desc.append(desc_response.xpath('string(.)'))
+        items_weburl.append(weburl[0])
+
+        print("name:{} desc:{} weburl:{}".format(
+            name_response.xpath('string(.)'), desc_response.xpath('string(.)'), weburl[0]))
+
+
+
+
+with open('中港台電視 TVB - Google 搜索1.html', 'r', encoding='utf-8') as f:
+    html = f.read(4096*1024*1024)
+    tree = etree.HTML(html, etree.HTMLParser())
+    res = tree.xpath('//div[@id="rso"]/div[@class="g"]/div[@class="rc"]')
+    items_weburl = []
+    items_name = []
+    items_desc = []
+    for re in res:
+        search_item = etree.fromstring(etree.tostring(re))
+        weburl = search_item.xpath('//div[@class="TbwUpd NJjxre"]/cite[contains(@class, "iUh30") and contains(@class, "tjvcx")]/text()')
+        name = search_item.xpath('//div[@class="rc"]//h3[@class="LC20lb DKV0Md"]/text()')
+        desc = search_item.xpath('//div[@class="s"]//span[@class="st"]')
+        response = etree.HTML(text=etree.tostring(desc[0]))
+        # print(response.xpath('string(.)'))
+        # soup = BeautifulSoup(etree.tostring(desc[0]),'html.parser')
+        # print(soup.get_text())
+        items_weburl.append(weburl[0])
+        items_name.append(name[0])
+        items_desc.append(response.xpath('string(.)'))
+
+        print("name:{} desc:{} weburl:{}".format(
+            name[0], response.xpath('string(.)'), weburl[0]))
+    # weburl_items = tree.xpath('//div[@class="TbwUpd NJjxre"]/cite[@class="iUh30 bc tjvcx"]/text()')
+    # name_items = tree.xpath('//div[@class="rc"]//h3[@class="LC20lb DKV0Md"]/text()')
+
+    weburl
+    name
+    desc
+
+    
+
+
+
 with open('中港台電視 TVB - Google Play.html', 'r', encoding='utf-8') as f:
     html = f.read(4096*1024*1024)
     tree = etree.HTML(html, etree.HTMLParser())
